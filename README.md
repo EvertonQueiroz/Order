@@ -18,7 +18,7 @@ Acesse a pasta do projeto e execute o seguinte comando:
 ```
 dotnet run --project .\Order.API\Order.API.csproj
 ```
-No navegador acesso o endereço:
+No navegador acesse o endereço:
 ```
 https://localhost:5001/swagger/index.html
 ```
