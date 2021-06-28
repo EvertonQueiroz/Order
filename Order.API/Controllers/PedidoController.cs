@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Order.API.Dto;
 using Order.Domain.Commands.Requests;
 using Order.Domain.Interfaces.Commands.Handlers;
@@ -25,8 +24,6 @@ namespace Order.API.Controllers
         {
             var result = handler.Handle(new FindAllOrdersRequest());
 
-
-
             return Ok(result);
         }
 
@@ -36,7 +33,7 @@ namespace Order.API.Controllers
         /// <param name="pedido"></param>
         /// <returns></returns>
         [HttpGet("pedido/{pedido}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(OrderDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
