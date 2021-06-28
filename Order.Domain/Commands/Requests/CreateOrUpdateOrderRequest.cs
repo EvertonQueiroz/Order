@@ -32,6 +32,9 @@ namespace Order.Domain.Commands.Requests
             if (string.IsNullOrEmpty(Number))
                 _errors.Add("Número do pedido é requerido.");
 
+            if (!_items.Any())
+                _errors.Add("O pedido deve possuir ao menos um item.");
+
             foreach (var item in _items)
             {
                 if (!item.IsValid())
@@ -65,10 +68,10 @@ namespace Order.Domain.Commands.Requests
             if (string.IsNullOrEmpty(Description))
                 _errors.Add("O nome do item é requerido.");
 
-            if (UnitPrice <= 0)
+            if (UnitPrice < 0)
                 _errors.Add("O valor do item deve ser maior ou igual a zero.");
 
-            if (Amount < 0)
+            if (Amount <= 0)
                 _errors.Add("A quantidade do item deve ser maior que zero.");
 
             return !_errors.Any();

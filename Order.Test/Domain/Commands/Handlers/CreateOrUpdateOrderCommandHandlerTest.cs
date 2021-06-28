@@ -5,6 +5,7 @@ using Order.Domain.Exceptions;
 using Order.Domain.Interfaces.Commands.Handlers;
 using Order.Domain.Interfaces.Data;
 using Order.Domain.Interfaces.Data.Repositories;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -123,6 +124,18 @@ namespace Order.Test.Domain.Commands.Handlers
             Assert.Equal(2, response.Items.Count());
             Assert.Equal(2, responseItem?.Amount);
             Assert.Equal(2, responseItem?.UnitPrice);
+        }
+
+        [Fact]
+        public void CreateOrUpdate_ShouldThrowArgumentNullException_WhenRepositoryIsNotInjected()
+        {
+            Assert.Throws<ArgumentNullException>(() => new CreateOrUpdateOrderCommandHandler(null, _unitOfWork.Object));
+        }
+
+        [Fact]
+        public void CreateOrUpdate_ShouldThrowArgumentNullException_WhenUnitOfWorkIsNotInjected()
+        {
+            Assert.Throws<ArgumentNullException>(() => new CreateOrUpdateOrderCommandHandler(_orderRepository.Object, null));
         }
     }
 }

@@ -4,6 +4,7 @@ using Order.Domain.Exceptions;
 using Order.Domain.Interfaces.Commands.Handlers;
 using Order.Domain.Interfaces.Data;
 using Order.Domain.Interfaces.Data.Repositories;
+using System;
 using System.Linq;
 
 namespace Order.Domain.Commands.Handlers
@@ -15,8 +16,8 @@ namespace Order.Domain.Commands.Handlers
 
         public CreateOrUpdateOrderCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork)
         {
-            _orderRepository = orderRepository;
-            _unitOfWork = unitOfWork;
+            _orderRepository = orderRepository?? throw new ArgumentNullException();
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException();
         }
 
         public CreateOrUpdateOrderResponse Handle(CreateOrUpdateOrderRequest command)

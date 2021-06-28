@@ -1,8 +1,10 @@
 ﻿using Moq;
 using Order.Domain.Commands.Handlers;
 using Order.Domain.Commands.Requests;
+using Order.Domain.Exceptions;
 using Order.Domain.Interfaces.Commands.Handlers;
 using Order.Domain.Interfaces.Data.Repositories;
+using System;
 using System.Linq;
 using Xunit;
 
@@ -123,6 +125,20 @@ namespace Order.Test.Domain.Commands.Handlers
             Assert.Equal("123456-N", response.Number);
             Assert.Single(response.Status);
             Assert.Contains(response.Status, status => status == "CODIGO_PEDIDO_INVALIDO");
+        }
+
+        [Fact]
+        public void ChangeStatus_ShouldThrowInvalidRequestException_WhenIsInvalidRequest()
+        {
+            var request = new ChangeStatusOrderRequest(string.Empty, "REPROVADO", 0, 0);
+
+            Assert.Throws<InvalidRequestException>(() => _handler.Handle(request));
+        }
+
+        [Fact]
+        public void ChangeStatus_ShouldThrowArgumentNullException_WhenRepositoryIsNotInjected()
+        {
+            Assert.Throws<ArgumentNullException>(() => new ChangeStatusOrderCommandHandler(null));
         }
     }
 }

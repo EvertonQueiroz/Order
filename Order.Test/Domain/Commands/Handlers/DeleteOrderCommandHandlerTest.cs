@@ -5,6 +5,7 @@ using Order.Domain.Exceptions;
 using Order.Domain.Interfaces.Commands.Handlers;
 using Order.Domain.Interfaces.Data;
 using Order.Domain.Interfaces.Data.Repositories;
+using System;
 using Xunit;
 
 namespace Order.Test.Domain.Commands.Handlers
@@ -65,6 +66,18 @@ namespace Order.Test.Domain.Commands.Handlers
             var request = new DeleteOrderRequest(string.Empty);
 
             Assert.Throws<InvalidRequestException>(() => _handler.Handle(request));
+        }
+
+        [Fact]
+        public void Delete_ShouldThrowArgumentNullException_WhenRepositoryIsNotInjected()
+        {
+            Assert.Throws<ArgumentNullException>(() => new DeleteOrderCommandHandler(null, _unitOfWork.Object));
+        }
+
+        [Fact]
+        public void Delete_ShouldThrowArgumentNullException_WhenUnitOfWorkIsNotInjected()
+        {
+            Assert.Throws<ArgumentNullException>(() => new DeleteOrderCommandHandler(_orderRepository.Object, null));
         }
     }
 }

@@ -9,14 +9,11 @@ namespace Order.Domain.Queries.Responses
         public string Number { get; private set; }
         public IReadOnlyList<OrderItemReponse> Items { get; private set; }
 
-        protected FindOrderByNumberResponse() { }
+        public FindOrderByNumberResponse(Order order) {
 
-        public static explicit operator FindOrderByNumberResponse(Order order) =>
-            new FindOrderByNumberResponse
-            {
-                Number = order.Number,
-                Items = order.Items.Select(item => (OrderItemReponse)item).ToList()
-            };
+            Number = order.Number;
+            Items = order.Items.Select(item => new OrderItemReponse(item.Description, item.Amount, item.UnitPrice)).ToList();
+        }
     }
 
     public class OrderItemReponse
@@ -25,14 +22,12 @@ namespace Order.Domain.Queries.Responses
         public decimal Amount { get; private set; }
         public decimal UnitPrice { get; private set; }
 
-        protected OrderItemReponse() { }
 
-        public static explicit operator OrderItemReponse(OrderItem item) =>
-            new OrderItemReponse
-            {
-                Description = item.Description,
-                Amount = item.Amount,
-                UnitPrice = item.UnitPrice
-            };
+        public OrderItemReponse(string description, decimal amount, decimal unitPrice)
+        {
+            Description = description;
+            Amount = amount;
+            UnitPrice = unitPrice;
+        }
     }
 }

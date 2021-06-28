@@ -1,5 +1,6 @@
 ﻿using Order.Domain.Commands.Requests;
 using Order.Domain.Commands.Responses;
+using Order.Domain.Exceptions;
 using Order.Domain.Interfaces.Commands.Handlers;
 using Order.Domain.Interfaces.Data.Repositories;
 using System;
@@ -14,11 +15,14 @@ namespace Order.Domain.Commands.Handlers
 
         public ChangeStatusOrderCommandHandler(IOrderRepository orderRepository)
         {
-            _orderRepository = orderRepository;
+            _orderRepository = orderRepository ?? throw new ArgumentNullException();
         }
 
         public ChangeStatusOrderResponse Handle(ChangeStatusOrderRequest command)
         {
+            if (!command.IsValid())
+                throw new InvalidRequestException(command.Errors);
+
             var order = _orderRepository.Get(command.Number);
 
             var response = new ChangeStatusOrderResponse(command.Number);
@@ -28,19 +32,15 @@ namespace Order.Domain.Commands.Handlers
                 return response;
             }
 
-            switch (command.Status)
-            {
-                case "REPROVADO":
-                    response.AddStatus("REPROVADO");
-                    return response;
 
-                case "APROVADO":
-                    response.AddStatus(Approve(order, command.Amount, command.Value));
-                    return response;
+            if (command.Status.Equals("REPROVADO", StringComparison.CurrentCultureIgnoreCase))
+                response.AddStatus("REPROVADO");
+            else if (command.Status.Equals("APROVADO", StringComparison.CurrentCultureIgnoreCase))
+                response.AddStatus(Approve(order, command.ApprovedAmount, command.ApprovedValue));
+            else
+                throw new InvalidOperationException();
 
-                default:
-                    throw new InvalidOperationException();
-            }
+            return response;
         }
 
         private IEnumerable<string> Approve(Order order, decimal approvedAmount, decimal approvedValue)
