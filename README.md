@@ -1,6 +1,6 @@
 Funcionalidades da aplicação:
 - Registrar pedidos;
-- Registrar sua aprovação ou reprovação.
+- Registrar a aprovação ou reprovação dos pedidos.
 
 # Pré-requisito
 - .NET 5
