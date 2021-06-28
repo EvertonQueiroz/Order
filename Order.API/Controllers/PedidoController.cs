@@ -80,7 +80,10 @@ namespace Order.API.Controllers
         {
             try
             {
-                var result = handler.Handle((CreateOrUpdateOrderRequest)dto);
+                var request = new CreateOrUpdateOrderRequest(dto.Pedido);
+                dto.Itens.ForEach(item => request.AddItem(item.Descricao, item.PrecoUnitario, item.Qtd));
+
+                var result = handler.Handle(request);
                 return Created("", result);
             }
             catch (Exception ex)
@@ -127,7 +130,9 @@ namespace Order.API.Controllers
         {
             try
             {
-                var result = handler.Handle((ChangeStatusOrderRequest)dto);
+                var request = new ChangeStatusOrderRequest(dto.Pedido, dto.Status, dto.ItensAprovados, dto.ValorAprovado);
+
+                var result = handler.Handle(request);
                 return Ok(result);
             }
             catch (Exception ex)

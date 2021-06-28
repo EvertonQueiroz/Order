@@ -2,6 +2,7 @@
 using Order.Domain.Interfaces.Queries.Handlers;
 using Order.Domain.Queries.Requests;
 using Order.Domain.Queries.Responses;
+using System;
 
 namespace Order.Domain.Queries.Handlers
 {
@@ -11,7 +12,7 @@ namespace Order.Domain.Queries.Handlers
 
         public FindAllOrdersQueryHandler(IOrderRepository orderRepository)
         {
-            _orderRepository = orderRepository;
+            _orderRepository = orderRepository ?? throw new ArgumentNullException();
         }
 
         public FindAllOrdersResponse Handle(FindAllOrdersRequest query)

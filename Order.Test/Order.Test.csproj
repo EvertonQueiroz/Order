@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Domain\Queries\Handlers\" />
     <Folder Include="Domain\Queries\Requests\" />
   </ItemGroup>
 

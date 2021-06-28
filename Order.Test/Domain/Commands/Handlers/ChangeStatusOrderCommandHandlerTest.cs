@@ -78,7 +78,7 @@ namespace Order.Test.Domain.Commands.Handlers
         }
 
         [Fact]
-        public void ChangeStatus_Second()
+        public void ChangeStatus_ShouldReturnApprovedWithSmallerAmountStatus_WhenTheApprovedAmountIsSmalledThenTheOrder()
         {
             _orderRepository
                 .Setup(m => m.Get(It.IsAny<string>()))

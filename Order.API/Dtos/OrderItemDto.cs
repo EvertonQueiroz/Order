@@ -19,14 +19,6 @@ namespace Order.API.Dto
                 Qtd = item.Amount
             };
 
-        public static explicit operator OrderItemCommand(OrderItemDto dto) =>
-            new OrderItemCommand
-            {
-                Description = dto.Descricao,
-                UnitPrice = dto.PrecoUnitario,
-                Amount = dto.Qtd,
-            };
-
         public static explicit operator OrderItemDto(OrderItemReponse response) =>
             new OrderItemDto
             {

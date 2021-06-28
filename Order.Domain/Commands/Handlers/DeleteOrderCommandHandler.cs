@@ -19,6 +19,9 @@ namespace Order.Domain.Commands.Handlers
 
         public void Handle(DeleteOrderRequest command)
         {
+            if (!command.IsValid())
+                throw new InvalidRequestException(command.Errors);
+
             var order = _orderRepository.Get(command.Number);
 
             if (order is null)

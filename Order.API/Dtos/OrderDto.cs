@@ -24,12 +24,6 @@ namespace Order.API.Dto
                 Itens = order.Items.Select(item => (OrderItemDto)item).ToList()
             };
 
-        public static explicit operator CreateOrUpdateOrderRequest(OrderDto dto) =>
-            new CreateOrUpdateOrderRequest
-            {
-                Number = dto.Pedido,
-                Items = dto.Itens.Select(item => (OrderItemCommand)item).ToList()
-            };
 
         public static explicit operator OrderDto(FindOrderByNumberResponse response) =>
             new OrderDto
