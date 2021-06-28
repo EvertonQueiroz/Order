@@ -2,11 +2,10 @@
 using Microsoft.Extensions.Logging;
 using Order.API.Dto;
 using Order.Domain.Commands.Requests;
-using Order.Domain.Exceptions;
 using Order.Domain.Interfaces.Commands.Handlers;
 using Order.Domain.Interfaces.Queries.Handlers;
 using Order.Domain.Queries.Requests;
-using System;
+using System.Net;
 
 namespace Order.API.Controllers
 {
@@ -14,21 +13,19 @@ namespace Order.API.Controllers
     [ApiController]
     public class PedidoController : ControllerBase
     {
-        private readonly ILogger _logger;
-
-        public PedidoController(ILogger<PedidoController> logger)
-        {
-            _logger = logger;
-        }
         /// <summary>
         /// Retorna todos os pedidos.
         /// </summary>
         /// <returns></returns>
         [HttpGet("pedido")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public IActionResult GetAll(
             [FromServices] IFindAllOrdersQueryHandler handler)
         {
             var result = handler.Handle(new FindAllOrdersRequest());
+
+
 
             return Ok(result);
         }
@@ -39,6 +36,10 @@ namespace Order.API.Controllers
         /// <param name="pedido"></param>
         /// <returns></returns>
         [HttpGet("pedido/{pedido}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public IActionResult Get(
             [FromServices] IFindOrderByNumberQueryHandler handler,
             string pedido)
@@ -54,6 +55,10 @@ namespace Order.API.Controllers
         /// <returns></returns>
         [HttpPost("pedido")]
         [HttpPut("pedido")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public IActionResult CreateOrUpdate(
             [FromServices] ICreateOrUpdateOrderCommandHandler handler,
             [FromBody] OrderDto dto)
@@ -71,6 +76,10 @@ namespace Order.API.Controllers
         /// <param name="pedido"></param>
         /// <returns></returns>
         [HttpDelete("pedido/{pedido}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public IActionResult Delete(
             [FromServices] IDeleteOrderCommandHandler handler,
             string pedido)
@@ -85,6 +94,9 @@ namespace Order.API.Controllers
         /// <param name="pedido"><sealso cref="OrderStatusUpdatedDto"></param>
         /// <returns></returns>
         [HttpPost("status")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public IActionResult UpdateStatus(
              [FromServices] IChangeStatusOrderCommandHandler handler,
              [FromBody] OrderStatusUpdatedDto dto)

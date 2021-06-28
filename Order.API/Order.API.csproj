@@ -17,8 +17,4 @@
     <ProjectReference Include="..\Order.Infra.Data\Order.Infra.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Database\" />
-  </ItemGroup>
-
 </Project>
