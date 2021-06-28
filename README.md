@@ -1,4 +1,6 @@
-Aplicação destinada a registrar pedidos e registrar sua aprovaçã ou reprovação.
+Aplicação destinada :
+- Registrar pedidos;
+- Registrar sua aprovação ou reprovação.
 
 # Pré-requisito
 - .NET 5
