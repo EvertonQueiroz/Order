@@ -16,8 +16,13 @@ O sistema foi construído em 3 camadas, implementando o padrão arquitetural CQR
 # Execução
 Acesse a pasta do projeto e execute o seguinte comando: 
 ```
-dotnet run --project Order.API\Order.API.csproj
+dotnet run --project .\Order.API\Order.API.csproj
 ```
+No navegador acesso o endereço:
+```
+https://localhost:5001/swagger/index.html
+```
+
 
 # Execução dos testes
 Acesse a pasta do projeto e execute o seguinte comando: 
