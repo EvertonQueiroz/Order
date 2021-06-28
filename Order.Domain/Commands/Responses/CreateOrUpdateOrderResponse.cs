@@ -1,35 +1,32 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Order.Domain.Commands.Responses
 {
     public class CreateOrUpdateOrderResponse
     {
-        public string Number { get; private set; }
-        public List<OrderItemReponse> Items { get; set; }
+        public bool IsNew { get; }
+        public string Number { get; }
+        public IReadOnlyList<CreateOrUpdateOrderItemReponse> Items { get; }
 
-        public CreateOrUpdateOrderResponse(Order order)
+        public CreateOrUpdateOrderResponse(bool isNew, Order order)
         {
             Number = order.Number;
-
-            Items = new List<OrderItemReponse>();
-            foreach (var item in order.Items)
-            {
-                Items.Add(new OrderItemReponse(item.Description, item.UnitPrice, item.Amount));
-            }
+            Items = order.Items.Select(item => new CreateOrUpdateOrderItemReponse(item)).ToList();
         }
     }
 
-    public class OrderItemReponse
+    public class CreateOrUpdateOrderItemReponse
     {
-        public string Description { get; private set; }
-        public decimal UnitPrice { get; set; }
-        public decimal Amount { get; set; }
+        public string Description { get; }
+        public decimal UnitPrice { get; }
+        public decimal Amount { get; }
 
-        public OrderItemReponse(string description, decimal unitPrice, decimal amount)
+        public CreateOrUpdateOrderItemReponse(OrderItem item)
         {
-            Description = description;
-            UnitPrice = unitPrice;
-            Amount = amount;
+            Description = item.Description;
+            UnitPrice = item.UnitPrice;
+            Amount = item.Amount;
         }
     }
 }

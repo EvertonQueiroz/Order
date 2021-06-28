@@ -16,12 +16,13 @@ namespace Order.Domain.Commands.Handlers
 
         public CreateOrUpdateOrderCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork)
         {
-            _orderRepository = orderRepository?? throw new ArgumentNullException();
+            _orderRepository = orderRepository ?? throw new ArgumentNullException();
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException();
         }
 
         public CreateOrUpdateOrderResponse Handle(CreateOrUpdateOrderRequest command)
         {
+            var isNew = false;
             if (!command.IsValid())
                 throw new InvalidRequestException(command.Errors);
 
@@ -29,6 +30,7 @@ namespace Order.Domain.Commands.Handlers
 
             if (order is null)
             {
+                isNew = true;
                 order = new Order(command.Number);
                 _orderRepository.Add(order);
             }
@@ -52,7 +54,7 @@ namespace Order.Domain.Commands.Handlers
 
             _unitOfWork.Commit();
 
-            return new CreateOrUpdateOrderResponse(order);
+            return new CreateOrUpdateOrderResponse(isNew, order);
         }
     }
 }

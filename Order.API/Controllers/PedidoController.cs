@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Order.API.Dto;
+using Order.API.Requests;
+using Order.API.Responses;
 using Order.Domain.Commands.Requests;
 using Order.Domain.Interfaces.Commands.Handlers;
 using Order.Domain.Interfaces.Queries.Handlers;
@@ -17,14 +18,13 @@ namespace Order.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("pedido")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PedidosResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public IActionResult GetAll(
             [FromServices] IFindAllOrdersQueryHandler handler)
         {
             var result = handler.Handle(new FindAllOrdersRequest());
-
-            return Ok(result);
+            return Ok(new PedidosResponse(result));
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace Order.API.Controllers
         /// <param name="pedido"></param>
         /// <returns></returns>
         [HttpGet("pedido/{pedido}")]
-        [ProducesResponseType(typeof(OrderDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PedidoResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -42,7 +42,7 @@ namespace Order.API.Controllers
             string pedido)
         {
             var result = handler.Handle(new FindOrderByNumberRequest(pedido));
-            return Ok((OrderDto)result);
+            return Ok(new PedidoResponse(result));
         }
 
         /// <summary>
@@ -52,19 +52,22 @@ namespace Order.API.Controllers
         /// <returns></returns>
         [HttpPost("pedido")]
         [HttpPut("pedido")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PedidoResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public IActionResult CreateOrUpdate(
             [FromServices] ICreateOrUpdateOrderCommandHandler handler,
-            [FromBody] OrderDto dto)
+            [FromBody] PedidoRequest pedido)
         {
-            var request = new CreateOrUpdateOrderRequest(dto.Pedido);
-            dto.Itens.ForEach(item => request.AddItem(item.Descricao, item.PrecoUnitario, item.Qtd));
+            var request = new CreateOrUpdateOrderRequest(pedido.Pedido);
+            pedido.Itens.ForEach(item => request.AddItem(item.Descricao, item.PrecoUnitario, item.Qtd));
 
             var result = handler.Handle(request);
-            return Created("", result);
+
+            return Created(
+                result.IsNew ? "Pedido realizado com sucesso." : "Pedido atualizado com sucesso",
+                new PedidoResponse(result));
         }
 
         /// <summary>
@@ -91,17 +94,17 @@ namespace Order.API.Controllers
         /// <param name="pedido"><sealso cref="OrderStatusUpdatedDto"></param>
         /// <returns></returns>
         [HttpPost("status")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MudarStatusResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public IActionResult UpdateStatus(
              [FromServices] IChangeStatusOrderCommandHandler handler,
-             [FromBody] OrderStatusUpdatedDto dto)
+             [FromBody] MudarStatusRequest mudarStatusRequest)
         {
-            var request = new ChangeStatusOrderRequest(dto.Pedido, dto.Status, dto.ItensAprovados, dto.ValorAprovado);
+            var request = new ChangeStatusOrderRequest(mudarStatusRequest.Pedido, mudarStatusRequest.Status, mudarStatusRequest.ItensAprovados, mudarStatusRequest.ValorAprovado);
 
             var result = handler.Handle(request);
-            return Ok(result);
+            return Ok(new MudarStatusResponse(result));
         }
     }
 }

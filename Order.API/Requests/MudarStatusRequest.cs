@@ -1,6 +1,6 @@
-﻿namespace Order.API.Dto
+﻿namespace Order.API.Requests
 {
-    public class OrderStatusUpdatedDto
+    public class MudarStatusRequest
     {
         public string Status { get; set; }
         public decimal ItensAprovados { get; set; }
