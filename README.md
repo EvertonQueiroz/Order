@@ -1,6 +1,6 @@
 Aplicação destinada a registrar pedidos e registrar sua aprovaçã ou reprovação.
 
-# Pre-requisito
+# Pré-requisito
 - .NET 5
 
 # Arquitetura
