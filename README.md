@@ -7,8 +7,8 @@ Aplicação destinada a registrar pedidos e registrar sua aprovaçã ou reprova�
 O sistema foi construído em 3 camadas, implementando o padrão arquitetural CQRS.
 
  1. **API** - Camada responsável por fazer a interface de interação com o usuário. Implementada em ASP.NET 5.
- 2. **Domain** - Lógicas de negócio e entidades.
- 3. **Data Access** - Implementação dos repositórios com Entity Framework Core 5.
+ 2. **Domain** - Camada responsável por implementar a lógica de negócio.
+ 3. **Data Access** - Camada responsável pela persistência do dado, através da implementação dos repositórios estabelecidos pela camada de domínio. Para o projeto foi utilizado o ORM: Entity Framework Core 5.
 
 
 # Execução
