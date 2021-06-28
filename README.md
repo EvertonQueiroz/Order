@@ -1,4 +1,4 @@
-Aplicação destinada :
+Funcionalidades da aplicação:
 - Registrar pedidos;
 - Registrar sua aprovação ou reprovação.
 
