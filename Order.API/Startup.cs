@@ -14,6 +14,7 @@ using Order.Domain.Commands.Handlers;
 using Order.Domain.Interfaces.Queries.Handlers;
 using Order.Domain.Queries.Handlers;
 using Microsoft.Extensions.Logging;
+using Order.API.Middlewares;
 
 namespace Order.API
 {
@@ -62,6 +63,8 @@ namespace Order.API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<GlobalErrorHandlingMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
