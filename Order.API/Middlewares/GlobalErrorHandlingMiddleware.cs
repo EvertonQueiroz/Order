@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Order.Domain.Exceptions;
 using System;
 using System.Net;
@@ -9,10 +10,12 @@ namespace Order.API.Middlewares
 {
     public class GlobalErrorHandlingMiddleware
     {
+        private readonly ILoggerFactory _loggerFactory;
         private readonly RequestDelegate _next;
 
-        public GlobalErrorHandlingMiddleware(RequestDelegate next)
+        public GlobalErrorHandlingMiddleware(ILoggerFactory loggerFactory, RequestDelegate next)
         {
+            _loggerFactory = loggerFactory;
             _next = next;
         }
 
@@ -24,34 +27,40 @@ namespace Order.API.Middlewares
             }
             catch (Exception ex)
             {
+                var _logger = _loggerFactory.CreateLogger<GlobalErrorHandlingMiddleware>();
+                if (ex is not InvalidRequestException
+                    && ex is not OrderNotFoundException)
+                    _logger.LogError(ex.Message);
+
                 var response = context.Response;
                 response.ContentType = "application/json";
 
-                var errorResponse = GetErrorResponse(ex);
-                var errorJson = JsonSerializer.Serialize(errorResponse);
+                string errorJson;
+                switch (ex)
+                {
+                    case InvalidRequestException invalidRequestException:
+                        response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        errorJson = JsonSerializer.Serialize(GetInvalidRequestExceptionResponse(invalidRequestException));
+                        break;
+                    case OrderNotFoundException orderNotFoundException:
+                        response.StatusCode = (int)HttpStatusCode.NotFound;
+                        errorJson = JsonSerializer.Serialize(GetOrderNotFoundExceptionResponse(orderNotFoundException));
+                        break;
+                    default:
+                        response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        errorJson = JsonSerializer.Serialize(GetDefaultExceptionResponse(ex));
+                        break;
+                };
 
                 await response.WriteAsync(errorJson);
             }
-        }
-
-        private object GetErrorResponse(Exception ex)
-        {
-            switch (ex)
-            {
-                case InvalidRequestException invalidRequestException:
-                    return GetInvalidRequestExceptionResponse(invalidRequestException);
-                case OrderNotFoundException orderNotFoundException:
-                    return GetOrderNotFoundExceptionResponse(orderNotFoundException);
-                default:
-                    return GetDefaultExceptionResponse(ex);
-            };
         }
 
         private object GetDefaultExceptionResponse(Exception ex)
         {
             return new
             {
-                message = ex.Message,
+                message = "Ocorreu um erro interno, por favor tente novamente. E caso o problema persista, entre em contato com o administrador.",
                 statusCode = (int)HttpStatusCode.InternalServerError
             };
         }

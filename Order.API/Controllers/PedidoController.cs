@@ -28,17 +28,9 @@ namespace Order.API.Controllers
         public IActionResult GetAll(
             [FromServices] IFindAllOrdersQueryHandler handler)
         {
-            try
-            {
-                var result = handler.Handle(new FindAllOrdersRequest());
+            var result = handler.Handle(new FindAllOrdersRequest());
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return Problem();
-            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -51,20 +43,8 @@ namespace Order.API.Controllers
             [FromServices] IFindOrderByNumberQueryHandler handler,
             string pedido)
         {
-            try
-            {
-                var result = handler.Handle(new FindOrderByNumberRequest(pedido));
-
-                return Ok((OrderDto)result);
-            }
-            catch (Exception ex)
-            {
-                if (ex is OrderNotFoundException)
-                    return NotFound();
-
-                _logger.LogError(ex.Message);
-                return Problem();
-            }
+            var result = handler.Handle(new FindOrderByNumberRequest(pedido));
+            return Ok((OrderDto)result);
         }
 
         /// <summary>
@@ -78,19 +58,11 @@ namespace Order.API.Controllers
             [FromServices] ICreateOrUpdateOrderCommandHandler handler,
             [FromBody] OrderDto dto)
         {
-            try
-            {
-                var request = new CreateOrUpdateOrderRequest(dto.Pedido);
-                dto.Itens.ForEach(item => request.AddItem(item.Descricao, item.PrecoUnitario, item.Qtd));
+            var request = new CreateOrUpdateOrderRequest(dto.Pedido);
+            dto.Itens.ForEach(item => request.AddItem(item.Descricao, item.PrecoUnitario, item.Qtd));
 
-                var result = handler.Handle(request);
-                return Created("", result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return Problem();
-            }
+            var result = handler.Handle(request);
+            return Created("", result);
         }
 
         /// <summary>
@@ -103,19 +75,8 @@ namespace Order.API.Controllers
             [FromServices] IDeleteOrderCommandHandler handler,
             string pedido)
         {
-            try
-            {
-                handler.Handle(new DeleteOrderRequest(pedido));
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                if (ex is OrderNotFoundException)
-                    return NotFound();
-
-                _logger.LogError(ex.Message);
-                return Problem();
-            }
+            handler.Handle(new DeleteOrderRequest(pedido));
+            return Ok();
         }
 
         /// <summary>
@@ -128,18 +89,10 @@ namespace Order.API.Controllers
              [FromServices] IChangeStatusOrderCommandHandler handler,
              [FromBody] OrderStatusUpdatedDto dto)
         {
-            try
-            {
-                var request = new ChangeStatusOrderRequest(dto.Pedido, dto.Status, dto.ItensAprovados, dto.ValorAprovado);
+            var request = new ChangeStatusOrderRequest(dto.Pedido, dto.Status, dto.ItensAprovados, dto.ValorAprovado);
 
-                var result = handler.Handle(request);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return Problem();
-            }
+            var result = handler.Handle(request);
+            return Ok(result);
         }
     }
 }
